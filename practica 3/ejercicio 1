@@ -1,0 +1,142 @@
+#include <iostream>
+#include <fstream>
+#include <string.h>
+
+using namespace std;
+void conver(char* a,int j,int *c);
+void metodo1(int* c,int f,int s);
+void metodo2(int* c,int *h,int f,int s);
+
+int main()
+{
+    char *jk=NULL;jk=new char[100];
+    ofstream fout;
+    ifstream fin;
+    string sd,nj,finn;
+    cout<<"ingrese nombre de archivoa a leer: "<<endl;
+    cin>>sd;
+    sd=sd+".txt";
+    try {
+
+            fin.open(sd); // abrir una archivo para lectura
+            if(!fin.is_open())
+                throw '2';
+            fin.getline(jk,100);
+            fin.close();
+            int i=0;
+            while(jk[i]!=0){
+                i++;
+            }
+            int fg,f=i*8,s;
+            cout<<"ingrese metodo de 1 0 2:";
+            cin>>fg;
+            if(!fg)
+                throw '3';
+            else if(fg<1 or fg>2)
+                throw '3';
+            int *c=NULL;c=new int [f];
+            int *h=NULL;h=new int [f];
+            cout<<"ingrese numero para separar :";
+            cin>>s;
+            if(!fg or s<=0 or s>=f)
+                throw '3';
+            conver(jk,s,c);
+            if(fg==2){
+                metodo2(c,h,f,s);
+            }
+            else{
+               metodo1(c,f,s);
+               for(int i=0;i<f;i++){
+                   h[i]=c[i];
+               }
+            }
+           cout<<"ingrese nombre de archivo a crear"<<endl;
+           cin>>nj;
+           nj=nj+".txt";
+           fout.open(nj); //abrir o crear un archivo para escritura.
+           if(!fout.is_open())
+               throw '1';
+           for(int i=0;i<f;i++)
+               finn+=(h[i]-208);
+           fout<<finn;
+           fout.close();
+           delete [] c;delete [] h;delete [] jk;
+    }
+    catch (char c) {
+            if(c=='1')
+               cout<<"se produjo un error con el archivo para la escritura "<<endl;
+            else if(c=='2')
+               cout<<"se produjo un error con el archivo para la lectura "<<endl;
+            else if(c=='3')
+                cout<<"valor no valido"<<endl;
+            else
+            cout<<"se produjo un error inexperado"<<endl;
+        }
+    return 0;
+}
+void conver(char *a,int j,int *c){
+    for(int k=0;k<j;k++){
+        for(int i=7;i>=0;i--){
+            c[i+(8*k)]=a[k]%2;
+            a[k]=a[k]/2;
+        }
+    }
+
+}
+void metodo1(int *c,int f,int s){
+int contador0=0,contador1=0,stop=0,gh=1;
+bool ft=1;
+for(int i=0;i<f;i++){
+    if(i%s==0){
+        if(contador0>contador1){
+            stop=2;
+            ft=0;
+        }
+        else if(contador1>contador0){
+            stop=3;
+            ft=0;
+        }
+        else{
+            stop=0;
+            ft=1;
+        }
+        contador0=0;
+        contador1=0;
+        gh=1;
+    }
+    if(c[i]==1 and ft==1){
+        c[i]=0;
+        contador1++;
+        ft=0;
+        gh=0;
+    }
+    else if(c[i]==0 and ft==1){
+        c[i]=1;
+        contador0++;
+        ft=0;
+        gh=0;
+    }
+    else{
+        if(c[i]==0)
+            contador0++;
+        else
+            contador1++;
+    }
+    gh++;
+    if(gh>=stop){
+        ft=1;
+        gh=1;
+    }
+}
+}
+void metodo2(int* c,int *h,int f,int s){
+    int nm=1;
+    for(int i=0;i<f;i++){
+        if(i%s==0){
+            h[i]=c[(s*nm)-1];
+            nm++;
+        }
+        else
+            h[i]=c[i-1];
+    }
+}
