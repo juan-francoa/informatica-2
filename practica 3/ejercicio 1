@@ -1,11 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <math.h>
 
 using namespace std;
 void conver(char* a,int j,int *c);
 void metodo1(int* c,int f,int s);
 void metodo2(int* c,int *h,int f,int s);
+void decodificador1(int *c,int f,int s);
+void decodificador2(int* c,int *h,int f,int s);
+void deco(int *c,char *b,int i);
 
 int main()
 {
@@ -40,7 +44,7 @@ int main()
             cin>>s;
             if(!fg or s<=0 or s>=f)
                 throw '3';
-            conver(jk,s,c);
+            conver(jk,i,c);
             if(fg==2){
                 metodo2(c,h,f,s);
             }
@@ -61,6 +65,46 @@ int main()
            fout<<finn;
            fout.close();
            delete [] c;delete [] h;delete [] jk;
+           int sl;
+           cout<<"Desea decodificar el archivo (1/si 2/no)";
+           cin>>sl;
+           if(!sl)
+               throw '3';
+           else if(sl<1 or sl>2)
+               throw '3';
+           if(sl==1){
+               fin.open(nj); // abrir una archivo para lectura
+               if(!fin.is_open())
+                   throw '2';
+               char *gl;gl=new char [f+2];
+               fin.getline(gl,f+2);
+               fin.close();
+               int *c;c=new int [f];
+               int *h;h=new int [f];
+               for(int i=0;i<f;i++){
+                   c[i]=gl[i]-48;
+               }
+               if(fg==1){
+                   decodificador1(c,f,s);
+                   for(int i=0;i<f;i++){
+                       h[i]=c[i];
+                   }
+               }
+               else{
+                   decodificador2(c,h,f,s);
+
+               }
+               fout.open("prueba.txt");
+               char *b;b=new char [i];
+               deco(h,b,i);
+               string ji;
+               for(int y=0;y<i;y++)
+                   ji+=b[y];
+               fout<<ji;
+               fout.close();
+               delete [] gl;delete [] c;delete [] b;delete [] h;
+           }
+
     }
     catch (char c) {
             if(c=='1')
@@ -81,7 +125,6 @@ void conver(char *a,int j,int *c){
             a[k]=a[k]/2;
         }
     }
-
 }
 void metodo1(int *c,int f,int s){
 int contador0=0,contador1=0,stop=0,gh=1;
@@ -132,11 +175,85 @@ for(int i=0;i<f;i++){
 void metodo2(int* c,int *h,int f,int s){
     int nm=1;
     for(int i=0;i<f;i++){
-        if(i%s==0){
+        if(i%s==0 and (s*nm)<=(f-f%s)){
             h[i]=c[(s*nm)-1];
             nm++;
         }
+        else if(i%s==0 and (s*nm)>(f-f%s)){
+            h[i]=c[f-1];
+        }
         else
             h[i]=c[i-1];
+    }
+}
+void decodificador1(int *c,int f,int s){
+    int contador0=0,contador1=0,stop=0,gh=1;
+    bool ft=1;
+    for(int i=0;i<f;i++){
+        if(i%s==0){
+            if(contador0>contador1){
+                stop=2;
+                ft=0;
+            }
+            else if(contador1>contador0){
+                stop=3;
+                ft=0;
+            }
+            else{
+                stop=0;
+                ft=1;
+            }
+            contador0=0;
+            contador1=0;
+            gh=1;
+        }
+        if(c[i]==1 and ft==1){
+            c[i]=0;
+            contador0++;
+            ft=0;
+            gh=0;
+        }
+        else if(c[i]==0 and ft==1){
+            c[i]=1;
+            contador1++;
+            ft=0;
+            gh=0;
+        }
+        else{
+            if(c[i]==0)
+                contador0++;
+            else
+                contador1++;
+        }
+        gh++;
+        if(gh>=stop){
+            ft=1;
+            gh=1;
+        }
+    }
+}
+void deco(int *c,char *b,int i){
+    int l=0,f=0;
+    for(int k=0;k<i;k++){
+        l=0;
+        for(int j=0,h=7;j<8;j++,h--){
+            f=pow(2,h);
+            l+=c[j+(8*k)]*f;
+
+        }
+        b[k]=l;
+    }
+}
+void decodificador2(int* c,int *h,int f,int s){
+    int nm=1;
+    for(int i=0;i<f;i++){
+        if((i+1)%s==0 and (s*nm)<=(f-f%s)){
+            h[i]=c[(s*nm)-s];
+            nm++;
+        }
+        else if(i+1==f)
+            h[i]=c[f-f%s];
+        else
+            h[i]=c[i+1];
     }
 }
