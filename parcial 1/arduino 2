@@ -1,0 +1,35 @@
+// C++ code
+//
+int a=13,b=12,c=11,d=10,e=9,f=8,g=7,h=6;
+int fg=1;
+int fin[7];
+int l=0;
+int y=0;
+void setup()
+{
+  pinMode(a, INPUT);
+  pinMode(b, INPUT);
+  pinMode(c, INPUT);
+  pinMode(d, INPUT);
+  pinMode(e, INPUT);
+  pinMode(f, INPUT);
+  pinMode(g, INPUT);
+  pinMode(h, INPUT);
+  pinMode(2, INPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  if(digitalRead(2)){
+  	fg=1;
+    l=0;
+  for(int i=13;i>6;i--){
+	if(digitalRead(i))
+      l+=fg;
+  	fg*=2;
+  }
+    Serial.print(l);
+    Serial.print('\n');
+  }
+}
