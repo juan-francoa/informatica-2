@@ -1,0 +1,60 @@
+int ser=2;
+int rclk=3;
+int srclk=4;
+int a[7]={45,29,76,13,29,86};
+int c[6*8];
+int d[8];
+void setup()
+{
+  pinMode(ser, OUTPUT);
+  pinMode(rclk, OUTPUT);
+  pinMode(srclk, OUTPUT);
+  
+}
+bool verdadero(int *d){
+    int l=0;
+  	int f=1;
+	for(int j=0,h=7;j<8;j++,h--){
+      for(int i=1;i<=h;i++){
+      	f*=2;
+      }
+            l+=d[j]*f;
+			f=1;
+        }
+  	if(l==29)
+    	return 0;
+  	else
+        return 1;
+}
+
+void loop()
+{
+ for(int k=0;k<6;k++){
+        for(int i=7;i>=0;i--){
+            c[i+(8*k)]=a[k]%2;
+            a[k]=a[k]/2;
+        }
+ }
+digitalWrite(rclk,LOW);
+  bool df=1;
+  for(int i=0,j=0;i<6*8;i++,j++){
+    d[j]=c[i];
+  	digitalWrite(srclk,LOW);
+    if(c[i]==0)
+    	digitalWrite(ser,LOW);
+    else 
+      	digitalWrite(ser,HIGH);	
+    digitalWrite(srclk,HIGH); 
+    if((i+1)%8==0 and df==0){
+    	digitalWrite(rclk,HIGH);
+      	digitalWrite(rclk,LOW);
+      	j=0;
+      	df=1;
+    }  
+    if((i+1)%8==0){
+      	j=-1;
+    	df=verdadero(d);
+    }
+  }
+  delay(200);
+}
